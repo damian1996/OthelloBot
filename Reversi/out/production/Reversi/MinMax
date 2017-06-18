@@ -1,0 +1,52 @@
+funkcja przyjmuje tablicę a potem zmienia kolor pionków? skąd wie jak skoro nie podajesz jej ruchu?
+lepiej jakby funkcja wywołująca zrobiła kopię, zmieniła odpowiednio kolor i podała wskaźnik na tablicę funkcji wywołanej
+i wtedy wywołana ma już gotową planszę i o nic nie dba, ale to taki szczegół
+i przeciwnik bierze min, nie max xd
+
+
+
+na przykładzie kółka i krzyżyk
+robię to rekurencyjnie…
+gdzieś globalnie albo w jednym obiekcie trzymam planszę (gdzie kółko gdzie krzyżyk)
+i tą planszę będziemy zmieniać między wywołaniami
+i argumencie dostaję który gracz się rusza
+i teraz w funkcji patrzę gdzie mogę się ruszyć na planszy (można zrobić sobie tymczasowo tablicę możliwych ruchów czy coś,
+ w naszym wypadku: tablicę pustych pól) dla każdego możliwego ruchu:
+- stawiamy nasze kółko/krzyżyk na planszy
+- jeżeli wygraliśmy to przywracamy planszę do stanu sprzed wywołania i zwracamy że wygraliśmy
+- jeżeli jest remis to znowu przywracamy planszę i zapisujemy sobie gdzieś że doszliśmy do remisu (o tym później)
+- wpp wywołujemy się rekurencyjnie na przeciwniku, zapisujemy sobie co nam się zwróciło (o tym później) i cofamy to co postawiliśmy
+ (czyli znowu przywracamy planszę) i teraz patrzymy na te zapisane wyniki
+- jeżeli udało nam się wygrać to znaczy, że istnieje taki ruch, dla którego mamy strategię wygrywającą, więc zwracamy że wygrywamy
+- jeżeli nie ma żadnej wygranej, ale jest remis, to znaczy że wprawdzie nie możemy doprowadzić do wygranej, ale możemy doprowadzić do remisu
+- zwracamy remis
+- jeżeli zawsze przegramy, to nie ważne co zrobimy i tak przegramy - zwracamy że przegramy
+jak konkretnie zwracamy - zwracamy inta, z 3 możliwymi wartościami - PLAYER_WON, PLAYER_LOST, DRAW, można też numer zwycięzcy,
+ jak ci wygodniej,
+ ale bierz pod uwagę, że przeciwnik będzie chciał wygrać, czyli jak my wygramy, on przegrywa itd, i na tym można łatwo się pomylić
+  - zwracanie *kto* wygrał
+ pozwala uniknąć czegoś takiego
+trzymanie planszy "na zewnątrz" rekurencji jest imho szybsze i prostsze - nie musisz trzymać w tej rekurencji dla każdego
+ruchu osobnej planszy, tylko gdzie
+się właśnie ruszyłeś
+i… jeszcze jak stwierdzić gdzie się ruszyć… no to:
+- dla każdego możliwego ruchu, ruszasz się, odpalasz funkcję rekurencyjną, zapisujesz gdzieś wynik, przywracasz planszę
+- jeżeli któryś ruch wygrał to jesteś w domu, tam się ruszasz
+- jeżeli nikt nie wygrał, ale któryś zremisował to rusz się tam, chociaż zremisujesz
+- wpp… nie ważne gdzie się ruszysz i tak przegrasz
+ok, to było dla kółka i krzyżyk, dla twojego reversi jest kilka zmian:
+- podstawiasz swoje reversi pod części "generowanie dostępnych ruchów", i "czy wygrałem" i to już powinno działać tylko…
+- tego jest za dużo, musisz wprowadzić ograniczenie w postaci "schodzę do pewnej głębokości rekurencji" czyli w rekurencji
+ trzymasz dodatkowy parametr
+ depth który inkrementujesz za każdym wywołaniem i jak dojdziesz do maxa to musisz np. heurystycznie stwierdzić jak dobra jest to pozycja -
+ w reversi jest to problem z tego co widzę bo jednym ruchem możesz całkiem zmienić sytuację na planszy
+- i teraz ty nie będziesz zwracał czy wygrałeś/zremisowałeś/przegrałeś tylko raczej w jakim stopniu wygrałeś/przegrałeś
+- i teraz jak ty się patrzysz na dostępne ruchy wybierasz maxa ze współczynników wygranej
+- jak przeciwnik się patrzy to wybiera min ze współczynników (twojej!) wygranej
+- możesz przypuścić sobie że -1 to że na 100% przegrasz, 1 to 100% wygrasz, 0 to remis, 0.5 to na 50% wygrasz i takie tam -
+te procenty to z heurystyki
+- więc ty dążysz do twojej wygranej, przeciwnik do twojej przegranej
+- i dlatego minmax
+
+CopyOfCurrentBoard[8][8]
+Minimax(nrPlayer)
